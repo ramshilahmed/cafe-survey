@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Cafe Customer Survey</title>
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial,Helvetica,sans-serif;
+}
+
+body{
+background:#f4f4f4;
+padding:20px;
+}
+
+.container{
+max-width:1300px;
+margin:auto;
+}
+
+h1{
+text-align:center;
+margin-bottom:20px;
+color:#333;
+}
+
+.form{
+background:#fff;
+padding:20px;
+border-radius:10px;
+box-shadow:0 5px 15px rgba(0,0,0,.15);
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+gap:15px;
+margin-bottom:20px;
+}
+
+input,select{
+padding:10px;
+border:1px solid #ccc;
+border-radius:6px;
+}
+
+button{
+padding:10px;
+border:none;
+cursor:pointer;
+border-radius:6px;
+font-weight:bold;
+}
+
+.add{
+background:#28a745;
+color:white;
+}
+
+.clear{
+background:#dc3545;
+color:white;
+}
+
+.stats{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+gap:15px;
+margin-bottom:20px;
+}
+
+.card{
+background:white;
+padding:15px;
+border-radius:10px;
+box-shadow:0 5px 10px rgba(0,0,0,.15);
+text-align:center;
+}
+
+table{
+width:100%;
+border-collapse:collapse;
+background:white;
+box-shadow:0 5px 15px rgba(0,0,0,.15);
+}
+
+th,td{
+padding:10px;
+border:1px solid #ddd;
+text-align:center;
+}
+
+th{
+background:#333;
+color:white;
+}
+
+.delete{
+background:red;
+color:white;
+padding:5px 10px;
+}
+
+@media(max-width:900px){
+
+table{
+display:block;
+overflow-x:auto;
+white-space:nowrap;
+}
+
+}
+
+</style>
+</head>
+<body>
+
+<div class="container">
+
+<h1>☕ Cafe Customer Survey</h1>
+
+<div class="stats">
+
+<div class="card">
+<h2 id="customers">0</h2>
+<p>Total Customers</p>
+</div>
+
+<div class="card">
+<h2 id="revenue">₹0</h2>
+<p>Total Revenue</p>
+</div>
+
+<div class="card">
+<h2 id="average">₹0</h2>
+<p>Average Bill</p>
+</div>
+
+<div class="card">
+<h2 id="groupsize">0</h2>
+<p>Average Group Size</p>
+</div>
+
+</div>
+
+<div class="form">
+
+<input type="time" id="time">
+
+<input type="number" id="group" placeholder="Group Size">
+
+<select id="age">
+<option>Under 18</option>
+<option>18-25</option>
+<option>26-35</option>
+<option>36-50</option>
+<option>50+</option>
+</select>
+
+<select id="gender">
+<option>Male</option>
+<option>Female</option>
+<option>Mixed</option>
+</select>
+
+<input type="text" id="item" placeholder="Items Ordered">
+
+<input type="number" id="qty" placeholder="Quantity">
+
+<input type="number" id="bill" placeholder="Bill ₹">
+
+<select id="type">
+<option>Dine In</option>
+<option>Takeaway</option>
+</select>
+
+<select id="payment">
+<option>UPI</option>
+<option>Cash</option>
+<option>Card</option>
+</select>
+
+<input type="number" id="stay" placeholder="Time Spent (min)">
+
+<input type="text" id="note" placeholder="Notes">
+
+<button class="add" onclick="addRow()">Add Record</button>
+
+<button class="clear" onclick="clearAll()">Clear All</button>
+
+</div>
+
+<table id="table">
+
+<thead>
+
+<tr>
+
+<th>#</th>
+<th>Time</th>
+<th>Group</th>
+<th>Age</th>
+<th>Gender</th>
+<th>Items</th>
+<th>Qty</th>
+<th>Bill</th>
+<th>Dine/Takeaway</th>
+<th>Payment</th>
+<th>Stay</th>
+<th>Notes</th>
+<th>Delete</th>
+
+</tr>
+
+</thead>
+
+<tbody>
+
+</tbody>
+
+</table>
+
+</div>
+
+<script>
+
+let totalRevenue=0;
+let totalCustomers=0;
+let totalGroup=0;
+
+function addRow(){
+
+let table=document.querySelector("#table tbody");
+
+let time=document.getElementById("time").value;
+let group=parseInt(document.getElementById("group").value)||0;
+let age=document.getElementById("age").value;
+let gender=document.getElementById("gender").value;
+let item=document.getElementById("item").value;
+let qty=document.getElementById("qty").value;
+let bill=parseFloat(document.getElementById("bill").value)||0;
+let type=document.getElementById("type").value;
+let payment=document.getElementById("payment").value;
+let stay=document.getElementById("stay").value;
+let note=document.getElementById("note").value;
+
+let row=table.insertRow();
+
+row.insertCell(0).innerHTML=table.rows.length;
+row.insertCell(1).innerHTML=time;
+row.insertCell(2).innerHTML=group;
+row.insertCell(3).innerHTML=age;
+row.insertCell(4).innerHTML=gender;
+row.insertCell(5).innerHTML=item;
+row.insertCell(6).innerHTML=qty;
+row.insertCell(7).innerHTML="₹"+bill;
+row.insertCell(8).innerHTML=type;
+row.insertCell(9).innerHTML=payment;
+row.insertCell(10).innerHTML=stay;
+row.insertCell(11).innerHTML=note;
+
+let btn=document.createElement("button");
+btn.innerHTML="Delete";
+btn.className="delete";
+
+btn.onclick=function(){
+
+table.deleteRow(row.rowIndex-1);
+calculate();
+
+}
+
+row.insertCell(12).appendChild(btn);
+
+calculate();
+
+document.querySelectorAll(".form input").forEach(i=>i.value="");
+
+}
+
+function calculate(){
+
+let rows=document.querySelectorAll("#table tbody tr");
+
+totalCustomers=rows.length;
+totalRevenue=0;
+totalGroup=0;
+
+rows.forEach(r=>{
+
+let bill=parseFloat(r.cells[7].innerHTML.replace("₹",""));
+let group=parseInt(r.cells[2].innerHTML);
+
+totalRevenue+=bill;
+totalGroup+=group;
+
+});
+
+document.getElementById("customers").innerHTML=totalCustomers;
+
+document.getElementById("revenue").innerHTML="₹"+totalRevenue.toFixed(2);
+
+document.getElementById("average").innerHTML=totalCustomers?
+"₹"+(totalRevenue/totalCustomers).toFixed(2):0;
+
+document.getElementById("groupsize").innerHTML=totalCustomers?
+(totalGroup/totalCustomers).toFixed(1):0;
+
+}
+
+function clearAll(){
+
+if(confirm("Delete all records?")){
+
+document.querySelector("#table tbody").innerHTML="";
+calculate();
+
+}
+
+}
+
+</script>
+
+</body>
+</html>
